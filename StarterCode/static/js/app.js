@@ -37,24 +37,42 @@ function barGraph(xsamples) {
     //console.log(bacteriaBB);
         // Parse and filter the data to get the sample's OTU data
         // Pay attention to what data is required for each chart
+        // Create bar chart in correct location
         var filterBar = bacteria.filter(x => x.id == xsamples)
         var otuIDs = filterBar.map(x => x.otu_ids)
         var otuSVals = filterBar.map(x => x.sample_values)
         var otuLabls = filterBar.map(x => x.otu_labels)
             //console.log(otuIDs)
-        // Create bar chart in correct location
+        var otuID10 = otuIDs[0].slice(0, 10) 
+            //console.log(otuID10);
+        var otuSVals10 = otuSVals[0].slice(0, 10)
+        var otuLabls10 = otuLabls[0].slice(0, 10)
+        var otuIDstr = otuID10.map(x => `OTU ID ${x}`);
+        var data = [{
+            type: 'bar',
+            x: otuSVals10.reverse(),
+            y: otuIDstr.reverse(),
+            orientation: 'h',
+            text: otuLabls10.reverse()
+          }];
+          
+          Plotly.newPlot('bar', data);
 
-        // Create bubble chart in correct location
-    
-})}
+    })
+}
 
 function bubbleGraph(xsamples) {
-
+// Create bubble chart in correct location
+d3.json(jsonfile).then(function(x) {
+    var bacteriaBB = x.samples
+        //console.log(bacteriaBB);
 }
 
 // Define function that will run on page load
 function init() {
-
+d3.json(jsonfile).then(function(x) {
+        var bacteriaBB = x.samples
+            //console.log(bacteriaBB);
     // Read json data
     var sampleid = d3.select("#selDataset");
     d3.json(jsonfile).then(function(data) {

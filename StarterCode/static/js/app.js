@@ -71,7 +71,24 @@ d3.json(jsonfile).then(function(x) {
     var otuSVals = filterBar.map(x => x.sample_values)
     var otuLabls = filterBar.map(x => x.otu_labels)
         //console.log(otuIDs)
+        var trace1 = {
+            x: otuIDs[0],
+            y: otuSVals[0],
+            mode: 'markers',
+            text: otuLabls[0],
+            marker: {
+              size: otuSVals[0],
+              color: otuIDs[0]
+              
+            }
+          };
+          
+          var data = [trace1];
 
+          
+          Plotly.newPlot('bubble', data);
+
+    })
 }
 
 // Define function that will run on page load

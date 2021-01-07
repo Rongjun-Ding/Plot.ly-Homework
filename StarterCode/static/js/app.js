@@ -14,8 +14,20 @@ function buildMetadata(sample) {
         var filterdata = samplemetadata.filter(x => x.id == sample)
         //console.log(filterdata);
         // Specify the location of the metadata and update it
-
+        var filterresults = filterdata[0];
+        //console.log(filterresults);
+       var sample_metadata = d3.select("#sample-metadata");
+       sample_metadata.html("");
+        Object.entries(filterresults).forEach(function([key, value]) {
+            console.log(key,value);
+            var row = sample_metadata.append("tr");           
+            row.append("td").html(`<strong><font size = '2'>${key}</font></strong>:`);
+            row.append("td").html(`<font size ='2'>${value}</font>`);
+        });
+            
+        });
 }
+
 
 // Define a function that will create charts for given sample
 function barGraph(sample) {

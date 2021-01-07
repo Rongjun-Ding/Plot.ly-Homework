@@ -16,7 +16,7 @@ function buildMetadata(sample) {
 }
 
 // Define a function that will create charts for given sample
-function buildCharts(sample) {
+function barGraph(sample) {
 
     // Read the json data
 
@@ -29,11 +29,18 @@ function buildCharts(sample) {
     
 }
 
+function bubbleGraph(sample) {
+
+}
+
 // Define function that will run on page load
 function init() {
 
     // Read json data
-
+    var sampleid = d3.select("#selDataset");
+    d3.json(jsonfile).then(function(data) {
+        var samplnames = data.names;
+            console.log(samplnames);
         // Parse and filter data to get sample names
 
         // Add dropdown option for each sample
@@ -45,6 +52,9 @@ function init() {
 function optionChanged(newSample){
 
     // Update metadata with newly selected sample
+    buildMetadata(newsample);
+    barGraph(newsample);
+    bubbleGraph(newsample);
 
     // Update charts with newly selected sample
 

@@ -34,7 +34,7 @@ function barGraph(xsamples) {
     d3.json(jsonfile).then(function(x) {
     // Read the json data
     var bacteria = x.samples
-    //console.log(bacteriaBB);
+    //console.log(bacteria);
         // Parse and filter the data to get the sample's OTU data
         // Pay attention to what data is required for each chart
         // Create bar chart in correct location
@@ -64,15 +64,19 @@ function barGraph(xsamples) {
 function bubbleGraph(xsamples) {
 // Create bubble chart in correct location
 d3.json(jsonfile).then(function(x) {
-    var bacteriaBB = x.samples
-        //console.log(bacteriaBB);
+    var bacteria = x.samples
+        //console.log(bacteria);
+    var filterBar = bacteria.filter(x => x.id == xsamples)
+    var otuIDs = filterBar.map(x => x.otu_ids)
+    var otuSVals = filterBar.map(x => x.sample_values)
+    var otuLabls = filterBar.map(x => x.otu_labels)
+        //console.log(otuIDs)
+
 }
 
 // Define function that will run on page load
 function init() {
-d3.json(jsonfile).then(function(x) {
-        var bacteriaBB = x.samples
-            //console.log(bacteriaBB);
+
     // Read json data
     var sampleid = d3.select("#selDataset");
     d3.json(jsonfile).then(function(data) {

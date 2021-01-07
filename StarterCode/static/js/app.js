@@ -30,20 +30,25 @@ function buildMetadata(sample) {
 
 
 // Define a function that will create charts for given sample
-function barGraph(sample) {
-
+function barGraph(xsamples) {
+    d3.json(jsonfile).then(function(x) {
     // Read the json data
-
+    var bacteria = x.samples
+    //console.log(bacteriaBB);
         // Parse and filter the data to get the sample's OTU data
         // Pay attention to what data is required for each chart
-
+        var filterBar = bacteria.filter(x => x.id == xsamples)
+        var otuIDs = filterBar.map(x => x.otu_ids)
+        var otuSVals = filterBar.map(x => x.sample_values)
+        var otuLabls = filterBar.map(x => x.otu_labels)
+            //console.log(otuIDs)
         // Create bar chart in correct location
 
         // Create bubble chart in correct location
     
-}
+})}
 
-function bubbleGraph(sample) {
+function bubbleGraph(xsamples) {
 
 }
 

@@ -6,11 +6,13 @@ d3.json(jsonfile).then(function(x) {
 
 // Define a function that will create metadata for given sample
 function buildMetadata(sample) {
-
+    d3.json(jsonfile).then(function(data) {
     // Read the json data
-
+    var samplemetadata = data.metadata;
+    
         // Parse and filter the data to get the sample's metadata
-
+        var filterdata = samplemetadata.filter(x => x.id == sample)
+        //console.log(filterdata);
         // Specify the location of the metadata and update it
 
 }

@@ -39,15 +39,21 @@ function init() {
     // Read json data
     var sampleid = d3.select("#selDataset");
     d3.json(jsonfile).then(function(data) {
-        var samplnames = data.names;
-            console.log(samplnames);
+        var samplenames = data.names;
+            console.log(samplenames);
         // Parse and filter data to get sample names
-
+        samplenames.forEach((x) => {
+            sampleid.append("option").text(x).property("value", x);
+        });
         // Add dropdown option for each sample
-
-    // Use first sample to build metadata and initial plots
-
+        // Use first sample to build metadata and initial plots
+        var firstname = samplenames[0];
+        buildMetadata(firstname);
+        barGraph(firstname);
+        bubbleGraph(firstname);
+    });
 }
+    
 
 function optionChanged(newSample){
 

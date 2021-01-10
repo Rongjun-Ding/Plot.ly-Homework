@@ -1,129 +1,103 @@
-var jsonfile = "samples.json";
-
-d3.json(jsonfile).then(function(x) {
-    //console.log(x)
-});
-
-// Define a function that will create metadata for given sample
-function buildMetadata(sample) {
-    d3.json(jsonfile).then(function(data) {
-    // Read the json data
-    var samplemetadata = data.metadata;
-    
-        // Parse and filter the data to get the sample's metadata
-        var filterdata = samplemetadata.filter(x => x.id == sample)
-        //console.log(filterdata);
-        // Specify the location of the metadata and update it
-        var filterresults = filterdata[0];
-        //console.log(filterresults);
-       var sample_metadata = d3.select("#sample-metadata");
-       sample_metadata.html("");
-        Object.entries(filterresults).forEach(function([key, value]) {
-            console.log(key,value);
-            var row = sample_metadata.append("tr");           
-            row.append("td").html(`<strong><font size = '2'>${key}</font></strong>:`);
-            row.append("td").html(`<font size ='2'>${value}</font>`);
-        });
-            
-        });
+//  Initialize Page
+function buildData(sample) {
+	//  Use D3 fetch to read the JSON file
+	// Read the json data
+	d3.json("samples.json").then((importedData) => {
+		var metadata = importedData.metadata;
+		var metaarray = metadata.filter(sampleobject => sampleobject.id == sample);
+		var result = metaarray[0]
+		var PANEL = d3.select("#sample-metadata");
+		PANEL.html("");
+		Object.entries(result).forEach(([key, value]) => {
+			PANEL.append("h6").text(`${key}: ${value}`);
+		});
+	});
 }
+//  Begin Function and Chart set-up 
 
+function buildCharts(sample) {
+	d3.json("samples.json").then((importedData) => {
+		var samples = importedData.samples;
+		var metaarray = samples.filter(sampleobject => sampleobject.id == sample);
+		var result = metaarray[0]
+		console.log(result);
+		//  Grab Values from the response json object to build the graphs
+		var ids = result.otu_ids;
+		var labels = result.otu_labels;
+		var values = result.sample_values;
+		console.log(values);
+		//  Build Bar Chart Top 10 OTU
+		//  Create Trace and reverse order for chart
+		var trace1 = {
+			y: ids.slice(0, 10).map(otuID => `OTU ${otuID}`).reverse(),
+			x: values.slice(0, 10).reverse(),
+			text: labels.slice(0, 10).reverse(),
+			type: "bar",
+			orientation: "h"
+		};
+		//  Array for barchart
+		var barchart = [trace1];
+		//  Bar Chart Layout
+		var barchartLayout = {
+			title: "Top 10 OTUs",
+			margin: {
+				t: 30,
+				l: 150
+			}
+		};
+		//  Plot Barchart
+		Plotly.newPlot("bar", barchart, barchartLayout);
 
-// Define a function that will create charts for given sample
-function barGraph(xsamples) {
-    d3.json(jsonfile).then(function(x) {
-    // Read the json data
-    var bacteria = x.samples
-    //console.log(bacteria);
-        // Parse and filter the data to get the sample's OTU data
-        // Pay attention to what data is required for each chart
-        // Create bar chart in correct location
-        var filterBar = bacteria.filter(x => x.id == xsamples)
-        var otuIDs = filterBar.map(x => x.otu_ids)
-        var otuSVals = filterBar.map(x => x.sample_values)
-        var otuLabls = filterBar.map(x => x.otu_labels)
-            //console.log(otuIDs)
-        var otuID10 = otuIDs[0].slice(0, 10) 
-            //console.log(otuID10);
-        var otuSVals10 = otuSVals[0].slice(0, 10)
-        var otuLabls10 = otuLabls[0].slice(0, 10)
-        var otuIDstr = otuID10.map(x => `OTU ID ${x}`);
-        var data = [{
-            type: 'bar',
-            x: otuSVals10.reverse(),
-            y: otuIDstr.reverse(),
-            orientation: 'h',
-            text: otuLabls10.reverse()
-          }];
-          
-          Plotly.newPlot('bar', data);
-
-    })
+		//  Trace for bubblechart
+		var trace2 = {
+			x: ids,
+			y: values,
+			text: labels,
+			mode: "markers",
+			marker: {
+				color: ids,
+				size: values,
+			}
+		};
+		//  Array for bubblechart
+		var bubblechart = [trace2];
+		//  Bubblechart Layout
+		var bubbleLayout = {
+			margin: {
+				t: 0
+			},
+			xaxis: {
+				title: "Id's"
+			},
+			hovermode: "closest",
+		};
+		//  Plot Bubblechart
+		Plotly.plot("bubble", bubblechart, bubbleLayout);
+	});
 }
-
-function bubbleGraph(xsamples) {
-// Create bubble chart in correct location
-d3.json(jsonfile).then(function(x) {
-    var bacteria = x.samples
-        //console.log(bacteria);
-    var filterBar = bacteria.filter(x => x.id == xsamples)
-    var otuIDs = filterBar.map(x => x.otu_ids)
-    var otuSVals = filterBar.map(x => x.sample_values)
-    var otuLabls = filterBar.map(x => x.otu_labels)
-        //console.log(otuIDs)
-        var trace1 = {
-            x: otuIDs[0],
-            y: otuSVals[0],
-            mode: 'markers',
-            text: otuLabls[0],
-            marker: {
-              size: otuSVals[0],
-              color: otuIDs[0]
-              
-            }
-          };
-          
-          var data = [trace1];
-
-          
-          Plotly.newPlot('bubble', data);
-
-    })
-}
-
-// Define function that will run on page load
+//  function when dropdown is selected
 function init() {
+	var selection = d3.select("#selDataset");
+	//  Use D3 to select dropdown
+	d3.json("samples.json").then((importedData) => {
+		//  Assign the value of dropdown menu to a variable
+		var sampleNames = importedData.names;
+		sampleNames.forEach((sample) => {
+			selection
+				.append("option")
+				.text(sample)
+				.property("value", sample);
+		});
 
-    // Read json data
-    var sampleid = d3.select("#selDataset");
-    d3.json(jsonfile).then(function(data) {
-        var samplenames = data.names;
-            console.log(samplenames);
-        // Parse and filter data to get sample names
-        samplenames.forEach((x) => {
-            sampleid.append("option").text(x).property("value", x);
-        });
-        // Add dropdown option for each sample
-        // Use first sample to build metadata and initial plots
-        var firstname = samplenames[0];
-        buildMetadata(firstname);
-        barGraph(firstname);
-        bubbleGraph(firstname);
-    });
-}
-    
-
-function optionChanged(newSample){
-
-    // Update metadata with newly selected sample
-    buildMetadata(newsample);
-    barGraph(newsample);
-    bubbleGraph(newsample);
-
-    // Update charts with newly selected sample
-
+		const firstSample = sampleNames[0];
+		buildCharts(firstSample);
+		buildData(firstSample);
+	});
 }
 
-// Initialize dashboard on page load
+function optionChanged(nextSample) {
+	buildCharts(nextSample);
+	buildData(nextSample);
+}
+
 init();
-

@@ -1,3 +1,4 @@
+
 //  Initialize Page
 function buildData(sample) {
 	//  Use D3 fetch to read the JSON file
